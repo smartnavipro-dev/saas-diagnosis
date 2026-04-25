@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 DISCORD_WEBHOOK = os.getenv("DISCORD_WEBHOOK_URL", "")
+GAS_SHEETS_URL  = os.getenv("GAS_SHEETS_URL", "")
 
 st.set_page_config(
     page_title="SaaS管理レベル診断 | 無料",
@@ -221,6 +222,22 @@ if submitted:
 
     if beta_email:
         st.success(f"✅ βテスター登録完了（{beta_email}）\nツール完成後、最初にご連絡します！")
+
+    # Google Sheets保存
+    if GAS_SHEETS_URL:
+        try:
+            requests.post(
+                GAS_SHEETS_URL,
+                json={
+                    "q1": q1, "q2": q2, "q3": ", ".join(q3),
+                    "q4": q4, "q5": q5,
+                    "beta_email": beta_email,
+                    "level": level_num, "score": score,
+                },
+                timeout=5,
+            )
+        except Exception:
+            pass
 
     # Discord通知
     if DISCORD_WEBHOOK:
