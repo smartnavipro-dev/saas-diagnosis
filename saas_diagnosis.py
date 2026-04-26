@@ -86,6 +86,8 @@ with st.form("diagnosis"):
 
     st.divider()
 
+    st.info("📌 **個人情報について**　メールアドレスの入力は任意です。入力しない場合、個人情報は一切収集されません。回答データは統計目的のみに使用します。")
+
     beta_email = st.text_input(
         "📩 βテスター登録（任意・先着10名）",
         placeholder="メールアドレスまたはLinkedInのURL",
