@@ -140,6 +140,20 @@ with st.form("diagnosis"):
 
     st.divider()
 
+    st.markdown(
+        '<div style="background:#EBF4FF;border:2px solid #4A90D9;'
+        'padding:1.2rem;border-radius:8px;margin:0.5rem 0;text-align:center">'
+        '<h4 style="color:#4A90D9;margin:0 0 0.5rem 0">'
+        '🚀 このプロセスをすべて自動化するツールを開発中です</h4>'
+        '<p style="margin:0;color:#555">'
+        'ライセンス利用率の自動収集・重複契約の検出・削減提案レポートを自動生成。<br>'
+        'βテスター<strong>先着10名</strong>に通常月額5〜10万円相当を<strong>無料</strong>でご提供します。<br>'
+        '<span style="font-size:0.9rem;color:#777">参加ご希望の方は下のメールアドレス欄にご入力ください</span>'
+        '</p>'
+        '</div>',
+        unsafe_allow_html=True,
+    )
+
     st.info("📌 **個人情報について**　メールアドレスの入力は任意です。入力しない場合、個人情報は一切収集されません。回答データは統計目的のみに使用します。")
 
     beta_email = st.text_input(
@@ -268,20 +282,6 @@ if submitted:
     st.markdown("### ✅ 今すぐできる改善アクション")
     for i, a in enumerate(lv["actions"], 1):
         st.markdown(f"**{i}.** {a}")
-
-    st.markdown(
-        '<div style="background:#EBF4FF;border:2px solid #4A90D9;'
-        'padding:1.2rem;border-radius:8px;margin:1.5rem 0;text-align:center">'
-        '<h4 style="color:#4A90D9;margin:0 0 0.5rem 0">'
-        '🚀 このプロセスをすべて自動化するツールを開発中です</h4>'
-        '<p style="margin:0;color:#555">'
-        'ライセンス利用率の自動収集・重複契約の検出・削減提案レポートを自動生成。<br>'
-        'βテスター<strong>先着10名</strong>に通常月額5〜10万円相当を<strong>無料</strong>でご提供します。<br>'
-        '<span style="font-size:0.9rem;color:#777">※ βテスター参加ご希望の方は下のメールアドレス欄にご入力ください</span>'
-        '</p>'
-        '</div>',
-        unsafe_allow_html=True,
-    )
 
     if beta_email:
         st.success(f"✅ βテスター登録完了（{beta_email}）\nツール完成後、最初にご連絡します！")
