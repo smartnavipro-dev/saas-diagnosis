@@ -148,7 +148,7 @@ with st.form("diagnosis"):
         '<p style="margin:0;color:#555">'
         'ライセンス利用率の自動収集・重複契約の検出・削減提案レポートを自動生成。<br>'
         'βテスター<strong>先着10名</strong>に通常月額5〜10万円相当を<strong>無料</strong>でご提供します。<br>'
-        '<span style="font-size:0.9rem;color:#777">参加ご希望の方は下のメールアドレス欄にご入力ください</span>'
+        '<span style="font-size:0.9rem;color:#777">ご希望の方は下のメールアドレス欄にご入力ください</span>'
         '</p>'
         '</div>',
         unsafe_allow_html=True,
