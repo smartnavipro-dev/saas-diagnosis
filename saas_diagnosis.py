@@ -25,15 +25,34 @@ header {visibility: hidden;}
 
 # ── ヘッダー ──────────────────────────────────────────────────────────────────
 st.markdown("## 📊 SaaS管理レベル診断（無料）")
-st.markdown("**5問・約3分**で、貴社のSaaS支出管理の現状がわかります。")
+st.markdown("**8問・約4分**で、貴社のSaaS支出管理の現状がわかります。")
 st.caption("IT部門・情報システム・調達・経営管理のご担当者向け")
 st.divider()
 
 # ── フォーム ──────────────────────────────────────────────────────────────────
 with st.form("diagnosis"):
 
+    # ── 企業属性 ──────────────────────────────────────────────────────────────
+    company_size = st.radio(
+        "**Q1. 貴社の従業員数を教えてください**",
+        ["〜50名（スタートアップ・小規模）",
+         "51〜300名（中小企業）",
+         "301〜1,000名（中堅企業）",
+         "1,001〜5,000名（大企業）",
+         "5,001名〜（エンタープライズ）"],
+        index=None,
+    )
+
+    industry = st.selectbox(
+        "業種（任意）",
+        ["選択しない", "IT・ソフトウェア", "製造業", "金融・保険", "小売・EC",
+         "サービス業", "メディア・広告", "医療・ヘルスケア", "建設・不動産", "教育", "その他"],
+    )
+    st.write("")
+
+    # ── SaaS管理の現状 ────────────────────────────────────────────────────────
     q1 = st.radio(
-        "**Q1. 貴社のSaaS・クラウドツールの月額費用、ざっくり把握できていますか？**",
+        "**Q2. 貴社のSaaS・クラウドツールの月額費用、ざっくり把握できていますか？**",
         ["はい、だいたいわかる",
          "なんとなくはわかるが正確ではない",
          "正直、よくわからない",
@@ -43,7 +62,7 @@ with st.form("diagnosis"):
     st.write("")
 
     q2 = st.radio(
-        "**Q2. 「誰も使っていないのに契約が続いていたツール」の経験はありますか？**",
+        "**Q3. 「誰も使っていないのに契約が続いていたツール」の経験はありますか？**",
         ["ある（気づいて解約した）",
          "おそらくあると思うが確認できていない",
          "ない",
@@ -53,7 +72,7 @@ with st.form("diagnosis"):
     st.write("")
 
     q3 = st.multiselect(
-        "**Q3. SaaS・ツールの契約状況、今どうやって管理していますか？（複数選択可）**",
+        "**Q4. SaaS・ツールの契約状況、今どうやって管理していますか？（複数選択可）**",
         ["ExcelやGoogleスプレッドシートで管理",
          "専用のSaaS管理ツールを使っている",
          "経理・財務部門が管理している",
@@ -63,8 +82,28 @@ with st.form("diagnosis"):
     )
     st.write("")
 
+    most_painful_pattern = st.radio(
+        "**Q5. 以下のうち、最も「もったいない」と感じる状況はどれですか？**",
+        ["退職者のライセンスが残ったまま課金されている",
+         "部門ごとに似た機能のツールが重複契約されている",
+         "機能の半分も使っていないのに上位プランを契約している",
+         "契約更新日を把握できておらず、気づいたら自動更新されている",
+         "導入したが使いこなせていないツールに費用を払い続けている",
+         "一部の人しか使っていないツールに全員分払っている",
+         "トライアルや個別契約のツールが管理外で動いている",
+         "そもそも何が無駄かわからない（可視化できていない）",
+         "その他"],
+        index=None,
+    )
+
+    other_pattern = st.text_input(
+        "「その他」を選択の場合、具体的に教えてください（任意）",
+        placeholder="例：ベンダーとの交渉機会を逃している　など",
+    )
+    st.write("")
+
     q4 = st.radio(
-        "**Q4. 「使われていないライセンスや重複契約を自動検出して削減提案を出してくれるツール」があれば使いたいですか？**",
+        "**Q6. 「使われていないライセンスや重複契約を自動検出して削減提案を出してくれるツール」があれば使いたいですか？**",
         ["ぜひ使いたい",
          "詳しく話を聞いてみたい",
          "コスト・手間次第",
@@ -74,7 +113,7 @@ with st.form("diagnosis"):
     st.write("")
 
     q5 = st.radio(
-        "**Q5. 月額いくらまでなら導入を検討しますか？**",
+        "**Q7. 月額いくらまでなら導入を検討しますか？**",
         ["月3万円以下",
          "月5万円以下",
          "月10万円以下",
@@ -82,6 +121,21 @@ with st.form("diagnosis"):
          "削減できた額の一定割合（成果報酬型）なら検討",
          "価格より効果次第"],
         index=None,
+    )
+    st.write("")
+
+    current_tool_status = st.radio(
+        "**Q8. 現在、SaaS管理ツール（Admina・Josys等）を使っていますか？**",
+        ["現在使っている",
+         "過去に検討したが導入していない",
+         "検討したことはない",
+         "そもそもそういうツールがあることを知らなかった"],
+        index=None,
+    )
+
+    current_tool_name = st.text_input(
+        "現在使っているツール名（任意・「現在使っている」を選択の場合）",
+        placeholder="例：Admina、Josys、HENNGE One　など",
     )
 
     st.divider()
@@ -99,13 +153,18 @@ with st.form("diagnosis"):
 # ── 送信処理 ──────────────────────────────────────────────────────────────────
 if submitted:
     # バリデーション
-    missing = [f"Q{i}" for i, v in [(1, q1), (2, q2), (4, q4), (5, q5)] if v is None] + \
-              (["Q3"] if not q3 else [])
+    missing = (
+        (["Q1"] if company_size is None else []) +
+        ([f"Q{i}" for i, v in [(2, q1), (3, q2), (6, q4), (7, q5)] if v is None]) +
+        (["Q4"] if not q3 else []) +
+        (["Q5"] if most_painful_pattern is None else []) +
+        (["Q8"] if current_tool_status is None else [])
+    )
     if missing:
         st.error(f"未回答の質問があります: {', '.join(sorted(missing))}")
         st.stop()
 
-    # スコア計算
+    # スコア計算（Q2・Q3・Q4 = 旧Q1・Q2・Q3 がスコア対象）
     score = 0
     score += {"はい、だいたいわかる": 2,
               "なんとなくはわかるが正確ではない": 1,
@@ -216,8 +275,10 @@ if submitted:
         '<h4 style="color:#4A90D9;margin:0 0 0.5rem 0">'
         '🚀 このプロセスをすべて自動化するツールを開発中です</h4>'
         '<p style="margin:0;color:#555">'
-        'ライセンス利用率の自動収集・重複契約の検出・削減提案レポートを自動生成<br>'
-        '<strong>βテスター先着10名に無料でご提供します</strong></p>'
+        'ライセンス利用率の自動収集・重複契約の検出・削減提案レポートを自動生成。<br>'
+        'βテスター<strong>先着10名</strong>に通常月額5〜10万円相当を<strong>無料</strong>でご提供します。<br>'
+        '<span style="font-size:0.9rem;color:#777">※ βテスター参加ご希望の方は下のメールアドレス欄にご入力ください</span>'
+        '</p>'
         '</div>',
         unsafe_allow_html=True,
     )
@@ -225,14 +286,38 @@ if submitted:
     if beta_email:
         st.success(f"✅ βテスター登録完了（{beta_email}）\nツール完成後、最初にご連絡します！")
 
+    st.markdown(
+        '<div style="background:#FFF9E6;border:2px solid #E8A000;'
+        'padding:1.2rem;border-radius:8px;margin:1rem 0">'
+        '<h4 style="color:#B8730A;margin:0 0 0.5rem 0">'
+        '📋 自社のSaaS削減余地を具体的な数字で知りたい方へ</h4>'
+        '<p style="margin:0;color:#555">'
+        '診断結果をもとに、<strong>個別の削減提案レポート</strong>（PDF・10ページ程度）を作成します。<br>'
+        '削減見込み額の試算・優先順位・交渉ポイントまでお届けします。<br>'
+        'サービス立ち上げ期につき、<strong>初期価格15万円〜（通常の2割引）</strong>でご提供中。<br><br>'
+        '<a href="mailto:smartnavipro@gmail.com" '
+        'style="background:#E8A000;color:white;padding:0.4rem 1rem;'
+        'border-radius:4px;text-decoration:none;font-weight:bold">'
+        '📩 お問い合わせ（メール）</a>'
+        '</p>'
+        '</div>',
+        unsafe_allow_html=True,
+    )
+
     # Google Sheets保存
     if GAS_SHEETS_URL:
         try:
             requests.post(
                 GAS_SHEETS_URL,
                 json={
+                    "company_size": company_size,
+                    "industry": industry,
                     "q1": q1, "q2": q2, "q3": ", ".join(q3),
+                    "most_painful_pattern": most_painful_pattern,
+                    "other_pattern": other_pattern,
                     "q4": q4, "q5": q5,
+                    "current_tool_status": current_tool_status,
+                    "current_tool_name": current_tool_name,
                     "beta_email": beta_email,
                     "level": level_num, "score": score,
                 },
@@ -249,11 +334,17 @@ if submitted:
                 json={"content": (
                     f"**📊 新しい診断回答**\n"
                     f"レベル: {lv['badge']} {level_num}（{lv['name']}）| スコア: {score}点\n\n"
-                    f"Q1 費用把握: {q1}\n"
-                    f"Q2 無駄経験: {q2}\n"
-                    f"Q3 管理方法: {', '.join(q3)}\n"
-                    f"Q4 ニーズ: {q4}\n"
-                    f"Q5 価格感: {q5}\n"
+                    f"Q1 企業規模: {company_size}\n"
+                    f"　　業種: {industry}\n"
+                    f"Q2 費用把握: {q1}\n"
+                    f"Q3 無駄経験: {q2}\n"
+                    f"Q4 管理方法: {', '.join(q3)}\n"
+                    f"Q5 気になるパターン: {most_painful_pattern}"
+                    + (f"（{other_pattern}）" if other_pattern else "") + "\n"
+                    f"Q6 ニーズ: {q4}\n"
+                    f"Q7 価格感: {q5}\n"
+                    f"Q8 管理ツール: {current_tool_status}"
+                    + (f"（{current_tool_name}）" if current_tool_name else "") + "\n"
                     f"βテスター: {beta_email or 'なし'}"
                 )},
                 timeout=5,
