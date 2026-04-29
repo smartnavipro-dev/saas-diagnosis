@@ -286,6 +286,25 @@ if submitted:
     if beta_email:
         st.success(f"✅ βテスター登録完了（{beta_email}）\n数日以内にヒアリングフォームをお送りします。お楽しみに！")
 
+    # Xシェアボタン
+    import urllib.parse
+    _app_url = "https://saas-diagnosis-4u2z3uxxgtmjrsvqzdqjzn.streamlit.app"
+    _tweet = (
+        f"SaaS管理レベルを診断してみた。\n"
+        f"結果：「{lv['name']}」（スコア{score}/7点）\n\n"
+        f"自社のSaaS無駄、どれくらいあるか気になる方はこちら👇\n"
+        f"#SaaS管理 #情シス #コスト削減"
+    )
+    _tweet_url = f"https://twitter.com/intent/tweet?text={urllib.parse.quote(_tweet)}&url={urllib.parse.quote(_app_url)}"
+    st.markdown(
+        f'<div style="text-align:center;margin:0.8rem 0">'
+        f'<a href="{_tweet_url}" target="_blank" '
+        f'style="background:#000;color:white;padding:0.5rem 1.4rem;'
+        f'border-radius:6px;text-decoration:none;font-weight:bold;font-size:0.95rem">'
+        f'𝕏 診断結果をポストする</a></div>',
+        unsafe_allow_html=True,
+    )
+
     st.markdown(
         '<div style="background:#FFF9E6;border:2px solid #E8A000;'
         'padding:1.2rem;border-radius:8px;margin:1rem 0">'
