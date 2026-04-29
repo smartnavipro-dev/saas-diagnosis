@@ -1,6 +1,13 @@
 # SaaS削減提案レポート — クライアント向けヒアリングシート
 # Google Form 設問構成（コピペ用）
 #
+# 【フォームURL（確定）】
+# 回答URL（クライアントに送るURL）:
+# https://docs.google.com/forms/d/e/1FAIpQLSfDa9uzNP3pBaoYmGMBHdkccum_oOFaPx9azHsZTfGVWRitYA/viewform
+#
+# 編集URL（自分の管理用）:
+# https://docs.google.com/forms/d/1AQVeIp6WSxpjWnSFoh2UJJ545eZV_KL74RjyL_DMCxQ/edit
+#
 # 【使い方】
 # 1. Google Form を新規作成（タイトル: SaaS管理ヒアリングシート）
 # 2. 説明文: 「個別削減提案レポート作成に必要な情報をご記入ください。
