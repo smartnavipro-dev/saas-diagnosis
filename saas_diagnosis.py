@@ -144,10 +144,10 @@ with st.form("diagnosis"):
         '<div style="background:#EBF4FF;border:2px solid #4A90D9;'
         'padding:1.2rem;border-radius:8px;margin:0.5rem 0;text-align:center">'
         '<h4 style="color:#4A90D9;margin:0 0 0.5rem 0">'
-        '🚀 このプロセスをすべて自動化するツールを開発中です</h4>'
+        '🎁 個別削減提案レポートを無料でご提供します</h4>'
         '<p style="margin:0;color:#555">'
-        'ライセンス利用率の自動収集・重複契約の検出・削減提案レポートを自動生成。<br>'
-        'βテスター<strong>先着10名</strong>に通常月額5〜10万円相当を<strong>無料</strong>でご提供します。<br>'
+        '貴社のSaaS契約を分析し、削減見込み額・即効アクション・3ヶ月ロードマップをPDFにまとめてお届けします。<br>'
+        'βテスター<strong>先着10名</strong>に通常<strong>150,000円（税抜）相当</strong>を<strong>無料</strong>でご提供します。<br>'
         '<span style="font-size:0.9rem;color:#777">ご希望の方は下のメールアドレス欄にご入力ください</span>'
         '</p>'
         '</div>',
@@ -159,7 +159,7 @@ with st.form("diagnosis"):
     beta_email = st.text_input(
         "📩 βテスター登録（任意・先着10名）",
         placeholder="メールアドレスまたはLinkedInのURL",
-        help="ツール完成後すぐにご連絡します。通常月額5〜10万円相当を無料でご提供します。",
+        help="ご登録後、数日以内にヒアリングフォームをお送りします。貴社固有の削減見込みを盛り込んだPDFレポートをお届けします（通常150,000円相当・無料）。",
     )
 
     submitted = st.form_submit_button("▶ 診断する", type="primary", use_container_width=True)
@@ -284,7 +284,7 @@ if submitted:
         st.markdown(f"**{i}.** {a}")
 
     if beta_email:
-        st.success(f"✅ βテスター登録完了（{beta_email}）\nツール完成後、最初にご連絡します！")
+        st.success(f"✅ βテスター登録完了（{beta_email}）\n数日以内にヒアリングフォームをお送りします。お楽しみに！")
 
     st.markdown(
         '<div style="background:#FFF9E6;border:2px solid #E8A000;'
