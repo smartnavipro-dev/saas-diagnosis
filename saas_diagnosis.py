@@ -140,28 +140,6 @@ with st.form("diagnosis"):
 
     st.divider()
 
-    st.markdown(
-        '<div style="background:#EBF4FF;border:2px solid #4A90D9;'
-        'padding:1.2rem;border-radius:8px;margin:0.5rem 0;text-align:center">'
-        '<h4 style="color:#4A90D9;margin:0 0 0.5rem 0">'
-        '🎁 個別削減提案レポートを無料でご提供します</h4>'
-        '<p style="margin:0;color:#555">'
-        '貴社のSaaS契約を分析し、削減見込み額・即効アクション・3ヶ月ロードマップをPDFにまとめてお届けします。<br>'
-        'βテスター<strong>先着10名</strong>に通常<strong>150,000円（税抜）相当</strong>を<strong>無料</strong>でご提供します。<br>'
-        '<span style="font-size:0.9rem;color:#777">ご希望の方は下のメールアドレス欄にご入力ください</span>'
-        '</p>'
-        '</div>',
-        unsafe_allow_html=True,
-    )
-
-    st.info("📌 **個人情報について**　メールアドレスの入力は任意です。入力しない場合、個人情報は一切収集されません。回答データは統計目的のみに使用します。")
-
-    beta_email = st.text_input(
-        "📩 βテスター登録（任意・先着10名）",
-        placeholder="メールアドレスまたはLinkedInのURL",
-        help="ご登録後、数日以内にヒアリングフォームをお送りします。貴社固有の削減見込みを盛り込んだPDFレポートをお届けします（通常150,000円相当・無料）。",
-    )
-
     submitted = st.form_submit_button("▶ 診断する", type="primary", use_container_width=True)
 
 # ── 送信処理 ──────────────────────────────────────────────────────────────────
@@ -262,6 +240,42 @@ if submitted:
     level_num = 1 if score <= 1 else 2 if score <= 3 else 3 if score <= 5 else 4
     lv = LEVELS[level_num]
 
+    # 削減見込み額の試算
+    SIZE_ANNUAL_BUDGET = {
+        "〜50名（スタートアップ・小規模）":   5_000_000,
+        "51〜300名（中小企業）":            20_000_000,
+        "301〜1,000名（中堅企業）":         80_000_000,
+        "1,001〜5,000名（大企業）":        300_000_000,
+        "5,001名〜（エンタープライズ）":    800_000_000,
+    }
+    WASTE_RATE_MID = {1: 0.25, 2: 0.15, 3: 0.10, 4: 0.075}
+    annual_budget = SIZE_ANNUAL_BUDGET.get(company_size, 20_000_000)
+    estimated_savings = int(annual_budget * WASTE_RATE_MID[level_num] * 0.6)
+    savings_man = estimated_savings // 10_000
+
+    # Q5別コメント（検証済みデータのみ使用）
+    Q5_COMMENTS = {
+        "退職者のライセンスが残ったまま課金されている":
+            "Salesforce Enterprise（月19,800円/ユーザー）で退職者が10名いれば、年間約238万円が無駄になります。退職フローにSaaSアカウント削除の手順がない企業では、気づかず半年・1年と課金が続くケースが多いです。",
+        "部門ごとに似た機能のツールが重複契約されている":
+            "海外調査では42〜48%の企業でIT部門が把握していない「シャドーIT」が確認されています。チャットツール・プロジェクト管理ツールが部門ごとに乱立しているケースは珍しくありません。",
+        "機能の半分も使っていないのに上位プランを契約している":
+            "Salesforceはプロフェッショナルからエンタープライズへのアップグレードでユーザーあたり月10,200円増加しますが、追加機能の多くが使われていないことがあります。なおSalesforceは契約後のダウングレードができないため、プラン選定の段階で慎重な判断が必要です。",
+        "契約更新日を把握できておらず、気づいたら自動更新されている":
+            "Money Forward Admina調査によると、10個以上のSaaSを使っている企業の64.07%が「意図せずSaaSを自動更新した経験がある」と回答しています。更新通知メールを見逃すだけで、年単位の無駄が生まれます。",
+        "導入したが使いこなせていないツールに費用を払い続けている":
+            "テックタッチ2024年調査では、大企業の60.7%が「使いこなせていないSaaSがある」と回答。HubSpotは2024年3月以降シート単位の課金体系に変わっており、使っていないユーザー分のコストが見えやすくなっています。",
+        "一部の人しか使っていないツールに全員分払っている":
+            "Zylo 2026年版調査では、企業が保有するSaaSライセンスの平均利用率は54%（46%が未使用）。100席契約して46席が使われていないなら、その分は丸ごと削減対象です。",
+        "トライアルや個別契約のツールが管理外で動いている":
+            "海外調査では42〜48%の企業でIT部門が把握していないシャドーITが存在しています。法人カードの明細を確認すると、トライアルのつもりが継続課金になっているサービスが見つかることがあります。",
+        "そもそも何が無駄かわからない（可視化できていない）":
+            "支出が見えていない状態は問題を認識できず、最も多くの無駄が放置されやすい状態です。まず全部門にSaaS利用状況のアンケートを実施し、何があるかを洗い出すことが最初の一手です。",
+        "その他":
+            "SaaSコストの無駄は会社ごとに異なります。まずは全SaaS契約の費用・利用率・更新日を1つのシートに集約することから始めましょう。",
+    }
+    q5_comment = Q5_COMMENTS.get(most_painful_pattern, "")
+
     # ── 結果表示 ──────────────────────────────────────────────────────────────
     st.divider()
     st.markdown(f"## {lv['badge']} 診断結果")
@@ -275,6 +289,29 @@ if submitted:
         unsafe_allow_html=True,
     )
 
+    # 削減見込み額の表示
+    st.markdown(
+        f'<div style="background:#F0FFF4;border:2px solid #00C851;'
+        f'padding:1rem;border-radius:8px;margin:0.8rem 0;text-align:center">'
+        f'<p style="margin:0 0 0.2rem 0;color:#00713A;font-weight:bold">💰 削減見込み額（試算）</p>'
+        f'<p style="font-size:1.8rem;font-weight:bold;color:#00713A;margin:0">約{savings_man:,}万円 / 年</p>'
+        f'<p style="font-size:0.82rem;color:#666;margin:0.3rem 0 0 0">'
+        f'貴社規模のSaaS年間支出 × 無駄率{int(WASTE_RATE_MID[level_num]*100)}%（診断結果）× 回収率60%で試算</p>'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+
+    # Q5別コメント
+    if q5_comment:
+        st.markdown(
+            f'<div style="background:#FFFBEA;border-left:4px solid #DAA520;'
+            f'padding:0.8rem 1rem;border-radius:4px;margin:0.8rem 0">'
+            f'<p style="margin:0;font-size:0.9rem;color:#555">'
+            f'💡 <strong>「{most_painful_pattern}」について</strong>：{q5_comment}'
+            f'</p></div>',
+            unsafe_allow_html=True,
+        )
+
     st.markdown("### 📋 現状の分析")
     for d in lv["details"]:
         st.markdown(f"- {d}")
@@ -283,43 +320,24 @@ if submitted:
     for i, a in enumerate(lv["actions"], 1):
         st.markdown(f"**{i}.** {a}")
 
-    if beta_email:
-        st.success(f"✅ βテスター登録完了（{beta_email}）\n数日以内にヒアリングフォームをお送りします。お楽しみに！")
-
     # Xシェアボタン
     import urllib.parse
     _app_url = "https://saas-diagnosis-4u2z3uxxgtmjrsvqzdqjzn.streamlit.app"
     _tweet = (
         f"SaaS管理レベルを診断してみた。\n"
-        f"結果：「{lv['name']}」（スコア{score}/7点）\n\n"
-        f"自社のSaaS無駄、どれくらいあるか気になる方はこちら👇\n"
+        f"結果：「{lv['name']}」（スコア{score}/7点）\n"
+        f"削減見込み：年間約{savings_man:,}万円\n\n"
+        f"自社のSaaS無駄が気になる方はこちら👇\n"
         f"#SaaS管理 #情シス #コスト削減"
     )
     _tweet_url = f"https://twitter.com/intent/tweet?text={urllib.parse.quote(_tweet)}&url={urllib.parse.quote(_app_url)}"
     st.markdown(
         f'<div style="text-align:center;margin:0.8rem 0">'
+        f'<p style="color:#555;font-size:0.9rem;margin:0 0 0.5rem 0">役に立ったら、ぜひシェアをお願いします🙏</p>'
         f'<a href="{_tweet_url}" target="_blank" '
         f'style="background:#000;color:white;padding:0.5rem 1.4rem;'
         f'border-radius:6px;text-decoration:none;font-weight:bold;font-size:0.95rem">'
         f'𝕏 診断結果をポストする</a></div>',
-        unsafe_allow_html=True,
-    )
-
-    st.markdown(
-        '<div style="background:#FFF9E6;border:2px solid #E8A000;'
-        'padding:1.2rem;border-radius:8px;margin:1rem 0">'
-        '<h4 style="color:#B8730A;margin:0 0 0.5rem 0">'
-        '📋 自社のSaaS削減余地を具体的な数字で知りたい方へ</h4>'
-        '<p style="margin:0;color:#555">'
-        '診断結果をもとに、<strong>個別の削減提案レポート</strong>（PDF・10ページ程度）を作成します。<br>'
-        '削減見込み額の試算・優先順位・交渉ポイントまでお届けします。<br>'
-        'サービス立ち上げ期につき、<strong>初期価格15万円〜（通常の2割引）</strong>でご提供中。<br><br>'
-        '<a href="mailto:smartnavipro@gmail.com" '
-        'style="background:#E8A000;color:white;padding:0.4rem 1rem;'
-        'border-radius:4px;text-decoration:none;font-weight:bold">'
-        '📩 お問い合わせ（メール）</a>'
-        '</p>'
-        '</div>',
         unsafe_allow_html=True,
     )
 
@@ -337,7 +355,6 @@ if submitted:
                     "q4": q4, "q5": q5,
                     "current_tool_status": current_tool_status,
                     "current_tool_name": current_tool_name,
-                    "beta_email": beta_email,
                     "level": level_num, "score": score,
                 },
                 timeout=5,
@@ -363,8 +380,7 @@ if submitted:
                     f"Q6 ニーズ: {q4}\n"
                     f"Q7 価格感: {q5}\n"
                     f"Q8 管理ツール: {current_tool_status}"
-                    + (f"（{current_tool_name}）" if current_tool_name else "") + "\n"
-                    f"βテスター: {beta_email or 'なし'}"
+                    + (f"（{current_tool_name}）" if current_tool_name else "")
                 )},
                 timeout=5,
             )
