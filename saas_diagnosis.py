@@ -341,6 +341,39 @@ if submitted:
         unsafe_allow_html=True,
     )
 
+    # 個別レポートの問い合わせ窓口
+    _mail_addr = "smartnavipro@gmail.com"
+    _mail_subject = urllib.parse.quote("【個別レポート相談】SaaS管理診断より")
+    _mail_body = urllib.parse.quote(
+        "SaaS管理レベル診断の結果を見てご連絡しました。\n\n"
+        f"・診断結果: レベル{level_num}（{lv['name']}）/ スコア{score}点\n"
+        f"・削減見込み（試算）: 約{savings_man:,}万円/年\n"
+        f"・従業員規模: {company_size}\n\n"
+        "会社名:\n"
+        "お名前:\n"
+        "ご相談内容（任意）:\n"
+    )
+    st.divider()
+    st.markdown(
+        f'<div style="background:#F7F9FC;border:1px solid #D5DCE6;'
+        f'padding:1rem 1.2rem;border-radius:8px;margin:0.5rem 0">'
+        f'<p style="margin:0 0 0.4rem 0;font-weight:bold;color:#1a3d6e">📄 貴社の実データで詳しく知りたい方へ</p>'
+        f'<p style="margin:0 0 0.7rem 0;font-size:0.9rem;color:#444">'
+        f'この診断は一般的な傾向にもとづく試算です。貴社の実際の契約内容をもとに、'
+        f'「どの契約を・どの順番で・いくら削れるか」をまとめた'
+        f'<strong>個別削減提案レポート（PDF・約10ページ／150,000円〜・規模による）</strong>を作成しています。'
+        f'ご興味のある方は、下のボタンからお気軽にご連絡ください（見積まで無料）。</p>'
+        f'<p style="text-align:center;margin:0">'
+        f'<a href="mailto:{_mail_addr}?subject={_mail_subject}&body={_mail_body}" '
+        f'style="background:#1a3d6e;color:white;padding:0.5rem 1.4rem;'
+        f'border-radius:6px;text-decoration:none;font-weight:bold;font-size:0.95rem">'
+        f'📩 メールで相談する（無料）</a></p>'
+        f'<p style="text-align:center;font-size:0.78rem;color:#888;margin:0.5rem 0 0 0">'
+        f'宛先: {_mail_addr}（診断結果が自動で本文に入ります）</p>'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+
     # Google Sheets保存
     if GAS_SHEETS_URL:
         try:

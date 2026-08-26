@@ -69,7 +69,7 @@ C:\Users\chanc\Downloads\saas_diagnosis_additional_questions.py  ← 上記の�
 
 ---
 
-## 追加3問（未実装・saas_diagnosis_additional_questions.py）
+## 追加3問 — ✅統合済み（2026-04-29のpure-give改修で本体に組込済。8問構成で公開中）
 
 ### 追加内容と配置位置
 | 追加問 | 内容 | 配置 |
@@ -132,17 +132,18 @@ f"既存管理ツール: {current_tool_status}\n"
 
 ## 次のアクション（優先順位順）
 
-### 1. 診断ツールの改修（1〜2時間）
-→ 上記の技術的問題を解決しながら追加3問を統合
+### 1. 診断ツールの改修 — ✅完了（追加3問は統合済み・8問構成で公開中）
 
 ### 2. データ保存先の確認
 - 現状: GASエンドポイント（`GAS_SHEETS_URL`）がすでに動いている
 - 引き継ぎメモでは「Supabaseが必須」と書いたが、GASが機能しているならそのままでOK
 - Supabase化は必要に応じて（回答数が増えてGASが遅くなった時）
 
-### 3. 個別レポート問い合わせ窓口の準備
-- Googleフォームか専用メールアドレスを用意
-- 診断完了画面のβテスター登録の下に追加
+### 3. 個別レポート問い合わせ窓口 — ✅実装済み（2026-08-26）
+- 診断結果画面の最下部にCTAボックスを追加（Xシェアボタンの下）
+- mailto: smartnavipro@gmail.com。件名・本文に診断結果（レベル/スコア/削減見込み/規模）が自動で入る
+- 文言: 個別削減提案レポート（PDF・約10ページ／150,000円〜・規模による）・見積まで無料
+- AppTestで8項目の表示検証済み。デプロイはgit push後にStreamlit Cloudが自動反映
 
 ### 4. note記事の投稿
 → `note_article_final.md` を参照。最終版完成済み。
@@ -160,7 +161,8 @@ f"既存管理ツール: {current_tool_status}\n"
 | SaaSライセンス利用率54%（46%が未使用） | Zylo 2026年版調査 |
 | 大企業の60.7%が「使いこなせていないSaaSがある」 | テックタッチ2024年調査 |
 | 10個以上のSaaS使用企業の64.07%が意図せず契約更新の経験 | Money Forward Admina調査 |
-| Salesforce Sales Cloud Enterprise 月19,800円/ユーザー（税抜） | Salesforce公式 2026年4月時点 |
+| Salesforce Sales Cloud Enterprise 月21,000円/ユーザー | Salesforce公式 2026年8月13日実測（旧19,800円から改定） |
+| Salesforce 現行プラン: Starter Suite 3,000 / Pro Suite 12,000 / Enterprise 21,000 / Unlimited 42,000 / Agentforce 1 Sales 66,000（月/ユーザー） | Salesforce公式 2026年8月13日実測。旧Professional 9,600はPro Suite 12,000に改定 |
 | Salesforceは契約後ダウングレード不可 | Salesforce公式 |
 | HubSpotは2024年3月以降シート単位の課金体系 | HubSpot公式 2026年4月時点 |
 
@@ -173,10 +175,13 @@ f"既存管理ツール: {current_tool_status}\n"
 ### 投稿済み記事
 - 第1弾: 「SaaSレビュー500件を分析した話」（投稿済み・反響あり）
 
-### 投稿予定記事（最終版完成済み）
+### 第2弾: 投稿済み（2026-08-13 18:25）
 - タイトル:「SaaS予算の40%は"気づかれずに"無駄になっている。500件のレビュー分析と日本企業に効く7つのチェックポイント」
-- ファイル: `note_article_final.md`
+- URL: https://note.com/royal_zephyr5395/n/n5e21f3299bca
+- ファイル: `note_article_final.md`（投稿直前にSalesforce価格を2026年8月実測値に更新して投稿）
 - CTA: 診断ツールへの誘導 + 個別レポートの簡潔な紹介（15万円〜）
+- ハッシュタグ: #SaaS #コスト削減 #業務効率化 #情報システム #DX ・無料記事・タイトルは40%のまま（46%はライセンス比率でありタイトル主語「予算」と不整合のため）
+- 未設定: 見出し画像（あとから設定可）
 
 ### ⚠️ 記事の軽微な不整合（投稿前に確認）
 - タイトル「40%は無駄」← 本文中の「40%前後」← Zylo実データ「46%が未使用」
