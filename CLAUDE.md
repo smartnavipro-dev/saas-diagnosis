@@ -13,10 +13,11 @@ SaaS管理レベル診断ツール（Streamlit製）をリードジェネレー�
 - CTAは記事の最後に1段落だけ自然に紹介。前面には出さない構造。
 - 本気で困っている層だけが個別レポートに進む導線設計。
 
-## 収益ロードマップ
-- 1〜3ヶ月: レポート販売中心、月50万円目標
-- 3〜6ヶ月: 顧問契約追加、月100万円目標
-- 6〜12ヶ月: 高単価コンサル追加、月300万円目標
+## 収益ロードマップ — ⚠️ 2026-09-02 取り下げ
+旧: 月50万→100万→300万の12ヶ月目標。**根拠となる実測（問い合わせ数・成約数）が1件も無いため取り下げ。**
+代わりの判断日: **2026-12-01**（それまでに 問い合わせ件数・note PV・Streamlit閲覧数 を実測してから、コンサル継続か縮小かを決める）。
+詳細: `ObsidianVault/Projects/CW_Hunter/2026-09-02_収入戦略の再考.md`
+<!-- 旧記載（参考）: 1〜3ヶ月 月50万 / 3〜6ヶ月 月100万 / 6〜12ヶ月 月300万 -->
 
 ---
 
@@ -68,6 +69,16 @@ C:\Users\chanc\Downloads\saas_diagnosis_additional_questions.py  ← 上記の�
 - `.env`で管理。Streamlit CloudではSecrets設定が必要。
 
 ---
+
+## 🚨 本番デプロイが古い問題（2026-08-27発見・未解決）
+本番URL（saas-diagnosis-4u2z3uxxgtmjrsvqzdqjzn.streamlit.app）は**「5問・約3分」の4月以前の旧版**を配信している。
+- GitHub origin/master は正しい（8問版＋問い合わせCTA・421行・コミットe5b3c9d）
+- つまり**Streamlit Cloud側がこのリポジトリのmasterを追従していない**（古いビルドのまま眠り→起床でも更新されず）
+- アプリは「Zzzz（居眠り）」状態だった＝**note記事からの訪問がほぼ無い**ことも判明
+- 対処（ユーザー本人の操作が必要）: share.streamlit.io にサインイン → 該当アプリの Manage app →
+  ①まず「Reboot」で直るか確認 ②直らなければソース設定（リポジトリ/ブランチ/メインファイル）を確認。
+  smartnavipro-dev/saas-diagnosis の master / saas_diagnosis.py を指しているべき
+- ⚠️アプリを作り直すとURLが変わり、**note記事内のリンクが切れる**。カスタムサブドメインに同じ文字列を指定すれば維持できる
 
 ## 追加3問 — ✅統合済み（2026-04-29のpure-give改修で本体に組込済。8問構成で公開中）
 
@@ -204,3 +215,16 @@ streamlit run saas_diagnosis.py
 
 ### デプロイ
 Streamlit Cloudと連携済み。mainブランチにpushすると自動デプロイ。
+
+
+---
+
+## 居眠り防止ピン（2026-08-29 導入）
+Streamlit Community Cloudはアクセスが途絶えるとアプリを休眠させ、訪問者に「起こすボタン」を見せてしまう（離脱要因）。
+対策として、Playwrightでページを開き寝ていたら起こすピンを1日3回自動実行している。
+
+- スクリプト: `keep_awake.py`（休眠画面なら「get this app back up」をクリック→タイトルが「SaaS管理レベル診断」になるまで待つ）
+- 実行: `run_keep_awake.bat` → ログは `keep_awake.log`（status=awake / woke+ok / ERROR）
+- タスクスケジューラ: `SaaS_Diagnosis_KeepAwake_0945` / `_1545` / `_2115`（毎日9:45・15:45・21:15、PC起動時のみ）
+- 削除するとき: `schtasks /Delete /TN "SaaS_Diagnosis_KeepAwake_0945" /F`（3つとも同様）
+- 限界: PCが点いていない夜間は打てないため、翌朝9:45の便で起こす設計。朝9:45以前の訪問者には休眠画面が出ることがある

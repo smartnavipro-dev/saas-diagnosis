@@ -5,8 +5,28 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DISCORD_WEBHOOK = os.getenv("DISCORD_WEBHOOK_URL", "")
-GAS_SHEETS_URL  = os.getenv("GAS_SHEETS_URL", "")
+
+
+def _secret(name: str, default: str = "") -> str:
+    """Streamlit Cloud の Secrets → 環境変数(.env) の順に鍵を読む。
+
+    2026-09-04 修正: 以前は os.getenv だけだった。Streamlit Cloud に置いた
+    Secrets（DISCORD_WEBHOOK_URL / GAS_SHEETS_URL）は st.secrets 側に入るため、
+    本番アプリからは鍵が空のままで、診断回答の Discord 通知が一度も飛んでいなかった
+    （8/30 に本番から送ったテスト回答が Discord に出なかったことで判明）。
+    ローカルには secrets.toml が無く st.secrets が例外を出すので握りつぶす。
+    """
+    try:
+        value = st.secrets.get(name)
+        if value:
+            return str(value)
+    except Exception:
+        pass
+    return os.getenv(name, default)
+
+
+DISCORD_WEBHOOK = _secret("DISCORD_WEBHOOK_URL")
+GAS_SHEETS_URL  = _secret("GAS_SHEETS_URL")
 
 st.set_page_config(
     page_title="SaaS管理レベル診断 | 無料",
