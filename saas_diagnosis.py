@@ -1,4 +1,5 @@
 import os
+import re
 import streamlit as st
 import requests
 from dotenv import load_dotenv
@@ -16,13 +17,17 @@ def _secret(name: str, default: str = "") -> str:
     （8/30 に本番から送ったテスト回答が Discord に出なかったことで判明）。
     ローカルには secrets.toml が無く st.secrets が例外を出すので握りつぶす。
     """
+    value = ""
     try:
-        value = st.secrets.get(name)
-        if value:
-            return str(value)
+        value = st.secrets.get(name) or ""
     except Exception:
         pass
-    return os.getenv(name, default)
+    if not value:
+        value = os.getenv(name, default) or ""
+    # 2026-09-05: Streamlit Cloud の Secrets に貼った Webhook URL の途中に改行/空白が
+    # 混入していた（貼り付け時の折り返し）。URLに空白が入ると requests が失敗し、
+    # except で握りつぶされて通知が飛ばない。URLに空白は本来存在しないので全て除去する。
+    return re.sub(r"\s+", "", str(value))
 
 
 DISCORD_WEBHOOK = _secret("DISCORD_WEBHOOK_URL")
