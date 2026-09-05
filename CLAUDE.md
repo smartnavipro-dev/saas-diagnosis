@@ -74,7 +74,9 @@ C:\Users\chanc\Downloads\saas_diagnosis_additional_questions.py  ← 上記の�
 - 症状: 8/30に本番アプリからテスト回答を送ったのに、Discord（Captain Hook）に「📊 新しい診断回答」が出なかった。curlで送った2件（test / webhook test 2）は届いていた＝**Webhookは生きているがアプリから飛んでいない**
 - 原因: `saas_diagnosis.py` が鍵を `os.getenv()` だけで読んでいた。Streamlit Cloud の Secrets は `st.secrets` 側に入るため、本番では DISCORD_WEBHOOK_URL / GAS_SHEETS_URL が空文字のまま → `if DISCORD_WEBHOOK:` が偽で通知処理を丸ごとスキップしていた（Googleスプレッドシート保存も同じ理由で動いていなかったはず）
 - 修正: `_secret()` を追加し **st.secrets → 環境変数(.env)** の順に読む。commit b73f8a1・push済み（Streamlit Cloudが自動反映）
-- 検証: 9/4 深夜に本番から Q5「その他」＝「【動作確認のテストです・無視してください】2026-09-04 Discord通知の復旧確認」でテスト送信。レベル2・削減見込み45万円/年 の結果画面まで正常表示。**Discordに届いたかはユーザー確認待ち**
+- 9/4のテストは**届かなかった**（9/5ユーザー確認）。追加調査で**真の原因**判明: Streamlit Cloud の Secrets に貼った DISCORD_WEBHOOK_URL の途中（95〜96文字目）に**空白が2つ混入**していた（.envより2文字長い）。URLに空白があると requests.post が失敗し、`except: pass` で握りつぶされて無音だった。GAS_SHEETS_URL は空白なし
+- 修正2（commit a97537c）: `_secret()` で読んだ値から空白類を全て除去。Streamlit Cloud をリブートして反映。9/5 20時台に本番から再テスト送信（Q5その他＝「2026-09-05 再テスト（空白除去修正後）」）→ 結果画面まで正常。**Discord到着はユーザー確認待ち**。届かなければ次は Streamlit の Manage app ログを見る
+- 教訓: 通知の失敗を `except Exception: pass` で黙らせない。少なくとも st.session_state か標準出力に理由を残す（次の改修で入れる）
 
 ## 🚨 本番デプロイが古い問題（2026-08-27発見・未解決）
 本番URL（saas-diagnosis-4u2z3uxxgtmjrsvqzdqjzn.streamlit.app）は**「5問・約3分」の4月以前の旧版**を配信している。
